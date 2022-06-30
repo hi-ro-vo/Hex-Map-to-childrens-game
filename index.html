@@ -1,10 +1,10 @@
 
 <!DOCTYPE html>
-<html>	
+<html>
 	<head>
 		<meta charset="utf-8">
 		<style>
-			body 
+			body
 			{
 			margin: 0px;
 			padding: 0px;
@@ -28,36 +28,49 @@
 		<script language="javascript" src="HexFoe.js"></script>
 		<script language="javascript" src="HexGuy.js"></script>
 		<script language="javascript" src="HexPath.js"></script>
+
+		<link rel="stylesheet" href="bootstrap/bootstrap.min.css">
+		<script src="bootstrap/bootstrap.min.js"></script>
+		<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 	</head>
 	<body onload = "init();">
-		<div id="canvasDiv">
+	<div class="row m-2">
+		<div id="canvasDiv" class="col-6 offset-1">
 			<canvas id= "hexCanvas" height=500 width=450>You'll need an HTML5-compliant browser to view this.
-			</canvas> <!iPhone is 1136x640>
-		</div>	
+			</canvas>
+		</div>
 		<!div id="buttonDiv" style="position:absolute;left:650px;top:50px;">
-		<div id="buttonDiv">
-			------------INFO
+		<div id="buttonDiv" class="col-4">
+			------------Сетка
 			<br>
+
+			<label for="gridX" class="form-label">Сетка X<span class="badge bg-info ms-1" id="gridXspan">8</span></label>
+			<input type="range" class="form-range" min="0" max="20" id="gridX" value="8" onInput="$('#gridXspan').html($(this).val());grid.x = $(this).val();init()">
+
+			<label for="gridX" class="form-label">Сетка Y<span class="badge bg-info ms-1" id="gridYspan">8</span></label>
+			<input type="range" class="form-range" min="0" max="20" id="gridY" value="8" onInput="$('#gridYspan').html($(this).val());grid.y = $(this).val();init()">
 			<!--button type="button" id="findCell" onclick="buttonFind()">findCell</button>
 			<br-->
-			<button type="button" id="path" onclick="buttonPath()">path</button>from red guy
-			<br>
-			------------LEVEL
-			<br>
-			<button type="button" id="makeFoe" onclick="buttonFoe()">makeFoe</button>place a single foe
-			<br>
-			<button type="button" id="pcgFoe" onclick="buttonPcg()">pcgFoe</button>generate five foes
-			<br>
-			<button type="button" id="makeObs" onclick="buttonObs()">obstacle</button>place or remove an obstacle
-			<br>
-			------------PLAY
-			<br>
-			<button type="button" id="spec" onclick="buttonSpecial()">specialAtk</button>
-			<button type="button" id="cancel" onclick="buttonCancel()">cancel</button>
-			<br>
-			<button type="button" id="cleanup" onclick="buttonCleanup()">Enemy Cleanup</button>
-			<button type="button" id="endTurn" onclick="buttonEndTurn()">End Turn</button>
+			<!--			<button type="button" id="path" onclick="buttonPath()">path</button>from red guy-->
+			<!--			<br>-->
+			<!--			&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;LEVEL-->
+			<!--			<br>-->
+			<!--			<button type="button" id="makeFoe" onclick="buttonFoe()">makeFoe</button>place a single foe-->
+			<!--			<br>-->
+			<!--			<button type="button" id="pcgFoe" onclick="buttonPcg()">pcgFoe</button>generate five foes-->
+			<!--			<br>-->
+			<!--			<button type="button" id="makeObs" onclick="buttonObs()">obstacle</button>place or remove an obstacle-->
+			<!--			<br>-->
+			<!--			&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;PLAY-->
+			<!--			<br>-->
+			<!--			<button type="button" id="spec" onclick="buttonSpecial()">specialAtk</button>-->
+			<!--			<button type="button" id="cancel" onclick="buttonCancel()">cancel</button>-->
+			<!--			<br>-->
+			<!--			<button type="button" id="cleanup" onclick="buttonCleanup()">Enemy Cleanup</button>-->
+			<!--			<button type="button" id="endTurn" onclick="buttonEndTurn()">End Turn</button>-->
 		</div>
+	</div>
+
 
 		<script language = "javascript">
 
@@ -72,48 +85,21 @@
 				activeGuy = 1,
 				inactiveGuy = 2;
 
+
 			grid.x = 8;
 			grid.y = 8;
 
-			var health=100;
-			function lose_health(dmg) {
-				health = health-dmg;
-				cxt.fillStyle="red";
-				cxt.fillRect(60,425,140,20);
-				cxt.fillStyle="green";
-				cxt.fillRect(60,425,(health/100)*140,20);
-			}
-
 			function init() {
-				//document.onclick = moveGuy;
-				//c = document.getElementById("c");
-				//cxt = c.getContext("2d");
 				cxt.fillStyle = "#fff";
 				cxt.strokeStyle = "#000";
 				cxt.lineWidth = 1;
 
 				// Parameters to constructor are cell-size, grid-height, grid-width, grid-top, grid-left
 				// This is in "odd-q" vertical layout
-				field = new Hexcellent(56,grid.x,grid.y,56,56)
+				field = new Hexcellent(20,grid.x,grid.y,10,60)
 
 				field.draw(cxt);
-
-				//obstacles(grid.x*grid.y/6);
-
-				//pcgFoe(7);
-
-				var result = field.findCell(75,50);
-				var newX = result.getX() + result.getA(),
-					newY = result.getY(),
-					newSize = result.getSize()/2;
-
-				var result2 = field.findCell(75,100);
-				var newX2 = result2.getX() + result2.getA();
-					newY2 = result2.getY();
-
-
-				guy(newSize,newX,newY);
-				guy2(newSize,newX2,newY2);
+				
 				buttonSelect(moveGuy);
 			}
 
@@ -130,7 +116,7 @@
 					if (result.obs == true) {
 						//console.log("obstacle");
 						msg = msg + " obstacle";
-					} 
+					}
 					if (result.has_foe == true) {
 						//console.log("contains foe");
 						msg = msg + " contains foe";
@@ -140,18 +126,6 @@
 						msg = msg + " contains player";
 					}
 					write_report(c,msg);
-				}
-			}
-
-			function obstacles(num) {
-				for (i=0;i<num;i++) {
-					var result = grid[Math.floor(Math.random()*grid.x)][Math.floor(Math.random()*grid.y)];
-					if (result != grid[0][0] && result != grid[0][1] && result != grid[1][0]) {
-						result.obs = true;
-						obsArray[i] = result;
-						cxt.fillStyle = "blue";
-						result.draw(cxt);
-					} else {i--;}
 				}
 			}
 
@@ -200,7 +174,7 @@
 
 					// redraw guy
 					redrawGuys();
-				}	
+				}
 			}
 
 			function redraw() {
@@ -237,7 +211,7 @@
 
 			//to get mouse coordinates
 			function writeMsg(c,msg) {
-				cxt.clearRect(0,0,159,20);
+				cxt.clearRect(0,0,300,20);
 				cxt.fillStyle = "black";
 				cxt.fillText(msg,10,17);
 			}

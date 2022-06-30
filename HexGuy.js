@@ -1,7 +1,7 @@
 var move_count = 2;
 
 function write_report(c,msg) {
-	cxt.clearRect(160,0,150,20);
+	cxt.clearRect(0,0,300,20);
 	cxt.fillStyle="black";
 	cxt.fillText(msg,165,17);
 }
