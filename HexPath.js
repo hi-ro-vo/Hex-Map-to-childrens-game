@@ -167,9 +167,9 @@ function path(start_x,start_y,end_x,end_y,show) {
 
 	// draw path
 	if (show != null) {
-		cxt.fillStyle = "orange";
+		context.fillStyle = "orange";
 		while (counter != 0) {
-			grid[path[counter][1]][path[counter][2]].draw(cxt);
+			grid[path[counter][1]][path[counter][2]].draw(context);
 			counter--;
 		}
 	} else {

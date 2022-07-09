@@ -1,9 +1,9 @@
 var move_count = 2;
 
 function write_report(c,msg) {
-	cxt.clearRect(0,0,300,20);
-	cxt.fillStyle="black";
-	cxt.fillText(msg,165,17);
+	context.clearRect(0,0,300,20);
+	context.fillStyle="black";
+	context.fillText(msg,165,17);
 }
 
 function guy(aSize,anX,aY) {
@@ -11,8 +11,8 @@ function guy(aSize,anX,aY) {
 		//theX = anX + 25;
 	newGuy = new Hexagon(aSize,anX,aY);
 	thatOneGuy.push(newGuy);
-	cxt.fillStyle = "red";
-	thatOneGuy[0].draw(cxt);
+	context.fillStyle = "red";
+	thatOneGuy[0].draw(context);
 
 	var result = field.findCell(anX,aY);
 
@@ -27,8 +27,8 @@ function guy2(aSize,anX,aY) {
 		//theX = anX + 25;
 	newGuy = new Hexagon(aSize,anX,aY);
 	thatOneGuy.push(newGuy);
-	cxt.fillStyle = "purple";
-	thatOneGuy[1].draw(cxt);
+	context.fillStyle = "purple";
+	thatOneGuy[1].draw(context);
 
 	var result = field.findCell(anX,aY);
 
@@ -57,8 +57,8 @@ function moveGuy(e) {
 			pc.setX(newX),
 			pc.setY(newY);
 
-			cxt.fillStyle = pc.color;
-			pc.draw(cxt);
+			context.fillStyle = pc.color;
+			pc.draw(context);
 
 			pc.grid=[result.gridX,result.gridY];
 			result.has_guy = a+1;
@@ -88,7 +88,7 @@ function move_count_down(aNum) {
 	}
 	move_count = move_count-num;
 	var msg = "Moves until enemy turn: " + move_count;
-	write_report(c,msg);
+	write_report(canvas,msg);
 }
 
 function enemy_cleanup() {
@@ -149,8 +149,8 @@ function special_atk(e) {
 				if (n == 0) {var color = "red";}
 				if (n == 1) {var color = "purple";}
 
-				cxt.fillStyle = color;
-				thatOneGuy[n].draw(cxt);
+				context.fillStyle = color;
+				thatOneGuy[n].draw(context);
 
 				thatOneGuy[n].grid=[result.gridX,result.gridY];
 				result.has_guy = n+1;
@@ -168,12 +168,12 @@ function byeOldGuy(index) {
 	var oldX = thatOneGuy[index].getX(),
 		oldY = thatOneGuy[index].getY();
 
-	cxt.fillStyle = "#fff";
-	cxt.strokeStyle = "#000";
-	cxt.lineWidth = 1;
+	context.fillStyle = "#fff";
+	context.strokeStyle = "#000";
+	context.lineWidth = 1;
 
 	var was = field.findCell(oldX,oldY);
-	was.draw(cxt);
+	was.draw(context);
 	was.has_guy = false;
 }
 

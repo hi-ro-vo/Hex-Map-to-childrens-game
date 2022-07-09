@@ -1,372 +1,366 @@
-
 <!DOCTYPE html>
-<html>
-	<head>
-		<meta charset="utf-8">
-		<style>
-			body
-			{
-			margin: 0px;
-			padding: 0px;
-			}
-			#canvasDiv
-			{
-			float:left;
-			}
-			#buttonDiv
-			{
-			position:relative;
-			top:40px;
-			float:left;
-			}
-			#endTurn
-			{
-			color:green;
-			}
-		</style>
-		<script language="javascript" src="Hex.js"></script>
-		<script language="javascript" src="HexFoe.js"></script>
-		<script language="javascript" src="HexGuy.js"></script>
-		<script language="javascript" src="HexPath.js"></script>
+<html class="h-75">
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            margin: 0px;
+            padding: 0px;
+        }
 
-		<link rel="stylesheet" href="bootstrap/bootstrap.min.css">
-		<script src="bootstrap/bootstrap.min.js"></script>
-		<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-	</head>
-	<body onload = "init();">
-	<div class="row m-2">
-		<div id="canvasDiv" class="col-6 offset-1">
-			<canvas id= "hexCanvas" height=500 width=450>You'll need an HTML5-compliant browser to view this.
-			</canvas>
-		</div>
-		<!div id="buttonDiv" style="position:absolute;left:650px;top:50px;">
-		<div id="buttonDiv" class="col-4">
-			------------Сетка
-			<br>
+        #canvasDiv {
+            float: left;
+        }
 
-			<label for="gridX" class="form-label">Сетка X<span class="badge bg-info ms-1" id="gridXspan">8</span></label>
-			<input type="range" class="form-range" min="0" max="20" id="gridX" value="8" onInput="$('#gridXspan').html($(this).val());grid.x = $(this).val();init()">
+        #buttonDiv {
+            position: relative;
+            top: 40px;
+            float: left;
+        }
 
-			<label for="gridX" class="form-label">Сетка Y<span class="badge bg-info ms-1" id="gridYspan">8</span></label>
-			<input type="range" class="form-range" min="0" max="20" id="gridY" value="8" onInput="$('#gridYspan').html($(this).val());grid.y = $(this).val();init()">
-			<!--button type="button" id="findCell" onclick="buttonFind()">findCell</button>
-			<br-->
-			<!--			<button type="button" id="path" onclick="buttonPath()">path</button>from red guy-->
-			<!--			<br>-->
-			<!--			&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;LEVEL-->
-			<!--			<br>-->
-			<!--			<button type="button" id="makeFoe" onclick="buttonFoe()">makeFoe</button>place a single foe-->
-			<!--			<br>-->
-			<!--			<button type="button" id="pcgFoe" onclick="buttonPcg()">pcgFoe</button>generate five foes-->
-			<!--			<br>-->
-			<!--			<button type="button" id="makeObs" onclick="buttonObs()">obstacle</button>place or remove an obstacle-->
-			<!--			<br>-->
-			<!--			&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;PLAY-->
-			<!--			<br>-->
-			<!--			<button type="button" id="spec" onclick="buttonSpecial()">specialAtk</button>-->
-			<!--			<button type="button" id="cancel" onclick="buttonCancel()">cancel</button>-->
-			<!--			<br>-->
-			<!--			<button type="button" id="cleanup" onclick="buttonCleanup()">Enemy Cleanup</button>-->
-			<!--			<button type="button" id="endTurn" onclick="buttonEndTurn()">End Turn</button>-->
-		</div>
-	</div>
+        #endTurn {
+            color: green;
+        }
+    </style>
+    <script language="javascript" src="Hex.js"></script>
+
+    <script language="javascript" src="HexGuy.js"></script>
+    <script language="javascript" src="HexPath.js"></script>
 
 
-		<script language = "javascript">
+    <link rel="stylesheet" href="bootstrap/bootstrap.min.css">
+    <script src="bootstrap/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+            integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+            crossorigin="anonymous"></script>
+    <script src="CellType.js"></script>
+</head>
+<body onload="init();" class="h-100">
+<div class="row m-2 h-100">
+    <div id="canvasDiv" class="col-6 offset-1 h-100" onresize="fitToContainer()">
+        <canvas id="hexCanvas">You'll need an HTML5-compliant browser to view this.
+        </canvas>
+    </div>
+    <!div id="buttonDiv" style="position:absolute;left:650px;top:50px;">
+    <div id="buttonDiv" class="col-4">
+        ------------Сетка
+        <br>
 
-			var c = document.getElementById("hexCanvas"),
-				cxt = c.getContext("2d"),
-				field,
-				resultsArray = new Array(),
-				grid = new Array(),
-				obsArray = new Array(),
-				thatOneGuy = new Array(),
-				thatBadGuy = new Array(),
-				activeGuy = 1,
-				inactiveGuy = 2;
+        <label for="gridX" class="form-label">Сетка X<span class="badge bg-info ms-1" id="gridXspan">8</span></label>
+        <input type="range" class="form-range" min="0" max="20" id="gridX" value="8"
+               onInput="$('#gridXspan').html($(this).val());grid.x = $(this).val();init()">
+
+        <label for="gridY" class="form-label">Сетка Y<span class="badge bg-info ms-1" id="gridYspan">8</span></label>
+        <input type="range" class="form-range" min="0" max="20" id="gridY" value="8"
+               onInput="$('#gridYspan').html($(this).val());grid.y = $(this).val();init()">
+
+        <label for="hexSize" class="form-label">Сетка Y<span class="badge bg-info ms-1"
+                                                             id="hexSizeSpan">20</span></label>
+        <input type="range" class="form-range" min="20" max="40" id="hexSize" value="20"
+               onInput="$('#hexSizeSpan').html($(this).val());hexSize = $(this).val();init()">
+        <!--button type="button" id="findCell" onclick="buttonFind()">findCell</button>
+        <br-->
+        <!--			<button type="button" id="path" onclick="buttonPath()">path</button>from red guy-->
+        <!--			<br>-->
+        <!--			&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;LEVEL-->
+        <!--			<br>-->
+        <!--			<button type="button" id="makeFoe" onclick="buttonFoe()">makeFoe</button>place a single foe-->
+        <!--			<br>-->
+        <!--			<button type="button" id="pcgFoe" onclick="buttonPcg()">pcgFoe</button>generate five foes-->
+        <!--			<br>-->
+        <!--			<button type="button" id="makeObs" onclick="buttonObs()">obstacle</button>place or remove an obstacle-->
+        <!--			<br>-->
+        <!--			&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;PLAY-->
+        <!--			<br>-->
+        <!--			<button type="button" id="spec" onclick="buttonSpecial()">specialAtk</button>-->
+        <!--			<button type="button" id="cancel" onclick="buttonCancel()">cancel</button>-->
+        <!--			<br>-->
+        <!--			<button type="button" id="cleanup" onclick="buttonCleanup()">Enemy Cleanup</button>-->
+        <!--			<button type="button" id="endTurn" onclick="buttonEndTurn()">End Turn</button>-->
+    </div>
+</div>
 
 
-			grid.x = 8;
-			grid.y = 8;
+<script language="javascript">
 
-			function init() {
-				cxt.fillStyle = "#fff";
-				cxt.strokeStyle = "#000";
-				cxt.lineWidth = 1;
+    var canvas = document.getElementById("hexCanvas"),
+        context = canvas.getContext("2d"),
+        field,
+        resultsArray = new Array(),
+        grid = new Array(),
+        obsArray = new Array(),
+        hexSize = 20;
 
-				// Parameters to constructor are cell-size, grid-height, grid-width, grid-top, grid-left
-				// This is in "odd-q" vertical layout
-				field = new Hexcellent(20,grid.x,grid.y,10,60)
 
-				field.draw(cxt);
-				
-				buttonSelect(moveGuy);
-			}
+    grid.x = 8;
+    grid.y = 8;
 
-			function findCell(e) {
-				var x = e.pageX-5,
-					y = e.pageY-5,
-					msg;
+    function init() {
+        field = new Hexcellent(hexSize, grid.x, grid.y, 10, 60)
+        fitToContainer();
+        context.strokeStyle = "#000";
+        context.lineWidth = 1;
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        // Parameters to constructor are cell-size, grid-height, grid-width, grid-top, grid-left This is in "odd-q" vertical layout
+        field.draw(context);
+    }
 
-				var result = field.findCell(x,y);
-				if (result != null) {
-					//console.log("(" + result.gridX + "," + result.gridY + ")");
-					msg = "(" + result.gridX + "," + result.gridY + ")"
 
-					if (result.obs == true) {
-						//console.log("obstacle");
-						msg = msg + " obstacle";
-					}
-					if (result.has_foe == true) {
-						//console.log("contains foe");
-						msg = msg + " contains foe";
-					}
-					if (result.has_guy == true) {
-						//console.log("contains player");
-						msg = msg + " contains player";
-					}
-					write_report(c,msg);
-				}
-			}
 
-			function makeObs(e) {
-				var x = e.pageX-5,
-					y = e.pageY-5,
-					gX,
-					gY;
+    function fitToContainer() {
+        // Make it visually fill the positioned parent
+        canvas.style.width = '100%';
+        canvas.style.height = '100%';
+        // ...then set the internal size to match
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+        redraw();
+    }
 
-				var result = field.findCell(x,y);
+    function findCell(e) {
+        var x = e.pageX - 5,
+            y = e.pageY - 5,
+            msg;
 
-				if (result != null) {
-					if (result.obs) {
-						gX = result.gridX,
-						gY = result.gridY;
-						obsArray.forEach(function(element,index,array) {
-							if (element.gridX == gX && element.gridY == gY) {
-								grid[gX][gY].obs = false;
-								array.splice(index,1);
-								redraw();
-								redrawGuys();
-							}
-						})
-					} else if (!result.has_foe && (result.has_guy < 1 || result.has_guy == undefined)) {
-						result.obs = true;
-						obsArray.push(result);
-						cxt.fillStyle = "blue";
-						result.draw(cxt);
-					}
-				}
-			}
+        var result = field.findCell(x, y);
+        if (result != null) {
+            //console.log("(" + result.gridX + "," + result.gridY + ")");
+            msg = "(" + result.gridX + "," + result.gridY + ")"
 
-			function findPath(e) {
-				var x = e.pageX-5,
-					y = e.pageY-5;
+            if (result.obs == true) {
+                //console.log("obstacle");
+                msg = msg + " obstacle";
+            }
+            if (result.has_foe == true) {
+                //console.log("contains foe");
+                msg = msg + " contains foe";
+            }
+            if (result.has_guy == true) {
+                //console.log("contains player");
+                msg = msg + " contains player";
+            }
+            write_report(canvas, msg);
+        }
+    }
 
-				var result = field.findCell(x,y);
-				if (result != null) {
+    function makeObs(e) {
+        var x = e.pageX - 5,
+            y = e.pageY - 5,
+            gX,
+            gY;
 
-					// erase old path
-					redraw();
+        var result = field.findCell(x, y);
 
-					var endX = result.gridX;
-					var endY = result.gridY;
-					path(thatOneGuy[0].grid[0],thatOneGuy[0].grid[1],endX,endY,true);
+        if (result != null) {
+            if (result.obs) {
+                gX = result.gridX,
+                    gY = result.gridY;
+                obsArray.forEach(function (element, index, array) {
+                    if (element.gridX == gX && element.gridY == gY) {
+                        grid[gX][gY].obs = false;
+                        array.splice(index, 1);
+                        redraw();
+                        redrawGuys();
+                    }
+                })
+            } else if (!result.has_foe && (result.has_guy < 1 || result.has_guy == undefined)) {
+                result.obs = true;
+                obsArray.push(result);
+                context.fillStyle = "blue";
+                result.draw(context);
+            }
+        }
+    }
 
-					// redraw guy
-					redrawGuys();
-				}
-			}
+    function findPath(e) {
+        var x = e.pageX - 5,
+            y = e.pageY - 5;
 
-			function redraw() {
-				//clear old
-				cxt.clearRect(0,25,c.width,c.height-25);
-				// grid
-				cxt.fillStyle = "#fff";
-				cxt.strokeStyle = "#000";
-				cxt.lineWidth = 1;
-				field.draw(cxt);
+        var result = field.findCell(x, y);
+        if (result != null) {
 
-				// obstacles
-				cxt.fillStyle = "blue";
-				for (i=0;i<obsArray.length;i++) {
-					obsArray[i].draw(cxt);
-				}
-			}
+            // erase old path
+            redraw();
 
-			function redrawGuys() {
-				// bad guys
-				cxt.fillStyle = "yellow";
-				cxt.strokeStyle = "#000";
-				cxt.lineWidth = 1;
-				for (i=0;i<thatBadGuy.length;i++) {
-					thatBadGuy[i].draw(cxt);
-				}
+            var endX = result.gridX;
+            var endY = result.gridY;
+            path(thatOneGuy[0].grid[0], thatOneGuy[0].grid[1], endX, endY, true);
 
-				// that one guy
-				cxt.fillStyle = "red";
-				thatOneGuy[0].draw(cxt);
-				cxt.fillStyle = "purple";
-				thatOneGuy[1].draw(cxt);
-			}
+            // redraw guy
+            redrawGuys();
+        }
+    }
 
-			//to get mouse coordinates
-			function writeMsg(c,msg) {
-				cxt.clearRect(0,0,300,20);
-				cxt.fillStyle = "black";
-				cxt.fillText(msg,10,17);
-			}
+    function redraw() {
+        context.clearRect(0, 25, canvas.width, canvas.height);
+        // grid
+        context.strokeStyle = "#000";
+        context.lineWidth = 1;
+        field.draw(context);
+    }
 
-			function getMousePos(c,evt) {
-				var rect = c.getBoundingClientRect();
-				return {
-					x: evt.clientX - rect.left,
-					y: evt.clientY - rect.top
-				};
-			}
 
-			c.addEventListener("mousemove",function(evt) {
-				var mousePos = getMousePos(c,evt);
-				var result = field.findCell(mousePos.x,mousePos.y);
-				var rX, rY;
+    //to get mouse coordinates
+    function writeMsg(c, msg) {
+        context.clearRect(0, 0, 300, 20);
+        context.fillStyle = "black";
+        context.fillText(msg, 10, 17);
+    }
 
-				var msg = "Mouse position: " + mousePos.x + "," + mousePos.y;
-				if (result != null) {
-					rX = result.gridX,
-					rY = result.gridY;
-					msg = msg + " (" + rX + "," + rY + ")";
-				}
-				writeMsg(c,msg);
-			}, false);
+    function getMousePos(c, evt) {
+        var rect = c.getBoundingClientRect();
+        return {
+            x: evt.clientX - rect.left,
+            y: evt.clientY - rect.top
+        };
+    }
 
-			function buttonSelect(func) {
-				redraw();
-				redrawGuys();
-				document.onclick = function(e) {
-					var x = e.pageX-5,
-						y = e.pageY-5,
-						z = e;
+    canvas.addEventListener("mousemove", function (evt) {
+        var mousePos = getMousePos(canvas, evt);
+        var result = field.findCell(mousePos.x, mousePos.y);
+        var rX, rY;
 
-					var result = field.findCell(x,y);
-					if (result != null && result.has_guy != false && result.has_guy != undefined) {
-						redraw();
-						redrawGuys();
-						activeGuy = result.has_guy;
-						whoIsGuy();
-						document.onclick = moveGuy;
-					} else {
-						if (func == findPath) {
-							redraw();
-							redrawGuys();
-						}
-						func(e);
-					}
-				}
-			}
+        var msg = "Mouse position: " + Math.round(mousePos.x) + "," + Math.round(mousePos.y);
+        if (result != null) {
+            rX = result.gridX,
+                rY = result.gridY;
+            msg = msg + " (" + rX + "," + rY + ")";
+        }
+        writeMsg(canvas, msg);
+    }, false);
 
-			function buttonEndTurn() {
-				enemy_cleanup();
-				foeMove();
-				buttonSelect(moveGuy);
-			}
+    window.addEventListener('resize', function (event) {
+        fitToContainer();
+    }, true);
 
-			function buttonCleanup() {
-				enemy_cleanup();
-				buttonSelect(moveGuy);
-			}
+    function buttonSelect(func) {
+        redraw();
+        redrawGuys();
+        document.onclick = function (e) {
+            var x = e.pageX - 5,
+                y = e.pageY - 5,
+                z = e;
 
-			function buttonFind() {
-				buttonSelect(findCell);
-			}
+            var result = field.findCell(x, y);
+            if (result != null && result.has_guy != false && result.has_guy != undefined) {
+                redraw();
+                redrawGuys();
+                activeGuy = result.has_guy;
+                whoIsGuy();
+                document.onclick = moveGuy;
+            } else {
+                if (func == findPath) {
+                    redraw();
+                    redrawGuys();
+                }
+                func(e);
+            }
+        }
+    }
 
-			function buttonMove() {
-				buttonSelect(moveGuy);
-			}
+    function buttonEndTurn() {
+        enemy_cleanup();
+        foeMove();
+        buttonSelect(moveGuy);
+    }
 
-			function buttonFoe() {
-				buttonSelect(makeFoe);
-			}
+    function buttonCleanup() {
+        enemy_cleanup();
+        buttonSelect(moveGuy);
+    }
 
-			function buttonObs() {
-				buttonSelect(makeObs);
-			}
+    function buttonFind() {
+        buttonSelect(findCell);
+    }
 
-			function buttonPcg() {
-				redraw();
-				redrawGuys();
-				pcgFoe(5);
-			}
+    function buttonMove() {
+        buttonSelect(moveGuy);
+    }
 
-			function buttonPath() {
-				buttonSelect(findPath);
-			}
+    function buttonFoe() {
+        buttonSelect(makeFoe);
+    }
 
-			function buttonCancel() {
-				var index = activeGuy-1;
-				thatOneGuy[index].spec_atk = [];
-				buttonSelect(moveGuy);
-			}
+    function buttonObs() {
+        buttonSelect(makeObs);
+    }
 
-			function buttonSpecial() {
-				whoIsGuy();
-				var a,
-					n,
-					aX,
-					aY,
-					nX,
-					nY,
-					loc,
-					retArray = new Array();
-				switch(activeGuy)
-				{
-				case 1:
-					a = 0;
-					n = 1;
-					break;
-				case 2:
-					a = 1;
-					n = 0;
-					break;
-				default:
-					console.log("incorrect activeGuy");
-				}
-				// get grids
-				// if non-active guy is adjacent to active guy, highlight all cells that are neighbors to active guy AND diagonals to non-active guy
-				aX = thatOneGuy[a].grid[0];
-				aY = thatOneGuy[a].grid[1];
-				nX = thatOneGuy[n].grid[0];
-				nY = thatOneGuy[n].grid[1];
-				var a_neighbors = field.neighbors(aX,aY);
-				for (var i=0;i<a_neighbors.length;i++) {
-					// if non-active guy is adjacent to active guy...
-					if (nX == a_neighbors[i].gridX && nY == a_neighbors[i].gridY) {
-						var n_diagonals = field.diagonals(nX,nY);
-						for (var j=0;j<n_diagonals.length;j++) {
-							for (var k=0;k<a_neighbors.length;k++) {
-								if (n_diagonals[j].gridX == a_neighbors[k].gridX && n_diagonals[j].gridY == a_neighbors[k].gridY) {
-									loc = a_neighbors[k];
-									var result = grid[loc.gridX][loc.gridY];
-									result.gridX = loc.gridX;
-									result.gridY = loc.gridY;
-									//retArray.push(result);
-									thatOneGuy[a].spec_atk.push(result);
-								}
-							}
-						}
-					}
-				}
-				if (thatOneGuy[a].spec_atk.length == 0) {
-					console.log("CANNOT UTILIZE SPECIAL ATTACK");
-					buttonSelect(moveGuy);
-				} else {
-					cxt.fillStyle = "orange";
-					for (var l=0;l<thatOneGuy[a].spec_atk.length;l++) {
-						thatOneGuy[a].spec_atk[l].draw(cxt);
-					}
-					redrawGuys();
-					document.onclick = special_atk;
-				}
-			}
+    function buttonPcg() {
+        redraw();
+        redrawGuys();
+        pcgFoe(5);
+    }
 
-		</script>
-	</body>
+    function buttonPath() {
+        buttonSelect(findPath);
+    }
+
+    function buttonCancel() {
+        var index = activeGuy - 1;
+        thatOneGuy[index].spec_atk = [];
+        buttonSelect(moveGuy);
+    }
+
+    function buttonSpecial() {
+        whoIsGuy();
+        var a,
+            n,
+            aX,
+            aY,
+            nX,
+            nY,
+            loc,
+            retArray = new Array();
+        switch (activeGuy) {
+            case 1:
+                a = 0;
+                n = 1;
+                break;
+            case 2:
+                a = 1;
+                n = 0;
+                break;
+            default:
+                console.log("incorrect activeGuy");
+        }
+        // get grids
+        // if non-active guy is adjacent to active guy, highlight all cells that are neighbors to active guy AND diagonals to non-active guy
+        aX = thatOneGuy[a].grid[0];
+        aY = thatOneGuy[a].grid[1];
+        nX = thatOneGuy[n].grid[0];
+        nY = thatOneGuy[n].grid[1];
+        var a_neighbors = field.neighbors(aX, aY);
+        for (var i = 0; i < a_neighbors.length; i++) {
+            // if non-active guy is adjacent to active guy...
+            if (nX == a_neighbors[i].gridX && nY == a_neighbors[i].gridY) {
+                var n_diagonals = field.diagonals(nX, nY);
+                for (var j = 0; j < n_diagonals.length; j++) {
+                    for (var k = 0; k < a_neighbors.length; k++) {
+                        if (n_diagonals[j].gridX == a_neighbors[k].gridX && n_diagonals[j].gridY == a_neighbors[k].gridY) {
+                            loc = a_neighbors[k];
+                            var result = grid[loc.gridX][loc.gridY];
+                            result.gridX = loc.gridX;
+                            result.gridY = loc.gridY;
+                            //retArray.push(result);
+                            thatOneGuy[a].spec_atk.push(result);
+                        }
+                    }
+                }
+            }
+        }
+        if (thatOneGuy[a].spec_atk.length == 0) {
+            console.log("CANNOT UTILIZE SPECIAL ATTACK");
+            buttonSelect(moveGuy);
+        } else {
+            context.fillStyle = "orange";
+            for (var l = 0; l < thatOneGuy[a].spec_atk.length; l++) {
+                thatOneGuy[a].spec_atk[l].draw(context);
+            }
+            redrawGuys();
+            document.onclick = special_atk;
+        }
+    }
+
+</script>
+</body>
 </html>

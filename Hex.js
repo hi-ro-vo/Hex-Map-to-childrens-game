@@ -10,7 +10,7 @@ function Hexagon(aSize, anX, aY) {
 	a = size/4;
 	h = size/4*2;
 	o = TANSIXTY*a;
-	
+
 	this.getSize = function() {
 		return size;
 	}				
@@ -57,6 +57,9 @@ function Hexagon(aSize, anX, aY) {
 				context.lineTo(x+a+h, y+o);
 				context.lineTo(x+a, y+o);
 				context.lineTo(x, y);
+				if (this.type != null){
+					context.fillStyle = this.type.color;
+				}
 				context.fill();
 				context.stroke();
 				context.closePath();
@@ -86,10 +89,10 @@ function Hexcellent(aCellSize, aWidth, aHeight, aLeft, aTop) {
 	var left = aLeft;
 	var top = aTop;
 	// Create a dummy hexagon to get offset-values for positioning
-	var h = new Hexagon(cellSize, 0, 0);
+	var hexagon = new Hexagon(cellSize, 0, 0);
 	var horizOffset = cellSize*(3/4);
 	var verticOffset = Math.sqrt(3)*cellSize/2;
-	var evenLineOffset = h.getH()+h.getA();
+	var evenLineOffset = hexagon.getH()+hexagon.getA();
 	// Create the grid in memory
 	//for(var i = 0; i < gridHeight; i++) {
 	for(var i = 0; i < gridWidth; i++) {
@@ -99,13 +102,12 @@ function Hexcellent(aCellSize, aWidth, aHeight, aLeft, aTop) {
 			if (i%2 == 0) { // Offset every other row to give tessallation
 
 				grid[i][j] = new Hexagon(cellSize, (i*horizOffset)+left,(j*verticOffset)+top);
+				grid[i][j].type = {color:'red'}
 			} else {
 
 				grid[i][j] = new Hexagon(cellSize, (i*horizOffset)+left,(j*verticOffset + verticOffset/2)+top);
 
-			/*	grid[i][j] = new Hexagon(cellSize, (i*horizOffset+evenLineOffset)+left, ((j+1)*verticOffset)+top);
-			} else {
-				grid[i][j] = new Hexagon(cellSize, (i*horizOffset)+left, ((j+1)*verticOffset)+top);		*/
+				grid[i][j].type = {color:'white'}
 			}
 		}
 	}
